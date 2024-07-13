@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RAMRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RAMRepository::class)]
@@ -18,6 +20,18 @@ class RAM extends Piece
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $typeFrequency = null;
+
+    /**
+     * @var Collection<int, Model>
+     */
+    #[ORM\ManyToMany(targetEntity: Model::class, mappedBy: 'ram')]
+    private Collection $models;
+
+    public function __construct()
+    {
+        $this->models = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -59,4 +73,32 @@ class RAM extends Piece
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Model>
+     */
+    public function getModels(): Collection
+    {
+        return $this->models;
+    }
+
+    public function addModel(Model $model): static
+    {
+        if (!$this->models->contains($model)) {
+            $this->models->add($model);
+            $model->addRam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeModel(Model $model): static
+    {
+        if ($this->models->removeElement($model)) {
+            $model->removeRam($this);
+        }
+
+        return $this;
+    }
+
 }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PieceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -53,6 +55,18 @@ class Piece
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $category = null;
+
+    /**
+     * @var Collection<int, StockHistory>
+     */
+    #[ORM\OneToMany(targetEntity: StockHistory::class, mappedBy: 'piece')]
+    private Collection $stockHistories;
+
+    public function __construct()
+    {
+        $this->stockHistories = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -154,4 +168,35 @@ class Piece
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, StockHistory>
+     */
+    public function getStockHistories(): Collection
+    {
+        return $this->stockHistories;
+    }
+
+    public function addStockHistory(StockHistory $stockHistory): static
+    {
+        if (!$this->stockHistories->contains($stockHistory)) {
+            $this->stockHistories->add($stockHistory);
+            $stockHistory->setPiece($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStockHistory(StockHistory $stockHistory): static
+    {
+        if ($this->stockHistories->removeElement($stockHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($stockHistory->getPiece() === $this) {
+                $stockHistory->setPiece(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

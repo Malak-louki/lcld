@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: PieceRepository::class)]
 #[ORM\InheritanceType("JOINED")]
@@ -43,11 +44,6 @@ class Piece
     #[ORM\Column]
     private ?int $quantity = null;
 
-    #[ORM\Column]
-    private ?bool $isArchived = null;
-
-    #[ORM\Column]
-    private ?bool $isDesktop = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(max: 12000)]
@@ -121,30 +117,6 @@ class Piece
         return $this;
     }
 
-    public function isArchived(): ?bool
-    {
-        return $this->isArchived;
-    }
-
-    public function setArchived(bool $isArchived): static
-    {
-        $this->isArchived = $isArchived;
-
-        return $this;
-    }
-
-    public function isDesktop(): ?bool
-    {
-        return $this->isDesktop;
-    }
-
-    public function setDesktop(bool $isDesktop): static
-    {
-        $this->isDesktop = $isDesktop;
-
-        return $this;
-    }
-
     public function getDescription(): ?string
     {
         return $this->description;
@@ -190,7 +162,7 @@ class Piece
     public function removeStockHistory(StockHistory $stockHistory): static
     {
         if ($this->stockHistories->removeElement($stockHistory)) {
-            // set the owning side to null (unless already changed)
+
             if ($stockHistory->getPiece() === $this) {
                 $stockHistory->setPiece(null);
             }

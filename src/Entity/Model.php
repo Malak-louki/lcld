@@ -37,8 +37,8 @@ class Model
     #[ORM\Column(nullable: true)]
     private ?bool $isArchived = null;
 
-    #[ORM\ManyToOne(inversedBy: 'models')]
-    private ?Motherboard $motherboard = null;
+    // #[ORM\ManyToOne(inversedBy: 'models')]
+    // private ?Motherboard $motherboard = null;
 
     #[ORM\ManyToOne(inversedBy: 'models')]
     private ?Processor $processor = null;
@@ -74,6 +74,9 @@ class Model
      */
     #[ORM\ManyToMany(targetEntity: Storage::class, inversedBy: 'models')]
     private Collection $storageDevices;
+
+    #[ORM\ManyToOne(inversedBy: 'model')]
+    private ?Motherboard $motherboard = null;
 
     public function __construct()
     {
@@ -171,17 +174,17 @@ class Model
         return $this;
     }
 
-    public function getMotherboard(): ?Motherboard
-    {
-        return $this->motherboard;
-    }
+    // public function getMotherboard(): ?Motherboard
+    // {
+    //     return $this->motherboard;
+    // }
 
-    public function setMotherboard(?Motherboard $motherboard): static
-    {
-        $this->motherboard = $motherboard;
+    // public function setMotherboard(?Motherboard $motherboard): static
+    // {
+    //     $this->motherboard = $motherboard;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getProcessor(): ?Processor
     {
@@ -313,6 +316,18 @@ class Model
     public function removeStorageDevice(Storage $storageDevice): static
     {
         $this->storageDevices->removeElement($storageDevice);
+
+        return $this;
+    }
+
+    public function getMotherboard(): ?Motherboard
+    {
+        return $this->motherboard;
+    }
+
+    public function setMotherboard(?Motherboard $motherboard): static
+    {
+        $this->motherboard = $motherboard;
 
         return $this;
     }

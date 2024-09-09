@@ -25,8 +25,20 @@ class Motherboard extends Piece
 
     public function __construct()
     {
+        parent::__construct();
         $this->model = new ArrayCollection();
     }
+
+    // /**
+    //  * @var Collection<int, Model>
+    //  */
+    // #[ORM\OneToMany(targetEntity: Model::class, mappedBy: 'motherboard')]
+    // private Collection $model;
+
+    // public function __construct()
+    // {
+    //     $this->model = new ArrayCollection();
+    // }
 
     public function getId(): ?int
     {
@@ -57,15 +69,45 @@ class Motherboard extends Piece
         return $this;
     }
 
+    // /**
+    //  * @return Collection<int, Model>
+    //  */
+    // public function getmodel(): Collection
+    // {
+    //     return $this->model;
+    // }
+
+    // public function addmodel(Model $model): static
+    // {
+    //     if (!$this->model->contains($model)) {
+    //         $this->model->add($model);
+    //         $model->setMotherboard($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removemodel(Model $model): static
+    // {
+    //     if ($this->model->removeElement($model)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($model->getMotherboard() === $this) {
+    //             $model->setMotherboard(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+
     /**
      * @return Collection<int, Model>
      */
-    public function getmodel(): Collection
+    public function getModel(): Collection
     {
         return $this->model;
     }
 
-    public function addmodel(Model $model): static
+    public function addModel(Model $model): static
     {
         if (!$this->model->contains($model)) {
             $this->model->add($model);
@@ -75,7 +117,7 @@ class Motherboard extends Piece
         return $this;
     }
 
-    public function removemodel(Model $model): static
+    public function removeModel(Model $model): static
     {
         if ($this->model->removeElement($model)) {
             // set the owning side to null (unless already changed)

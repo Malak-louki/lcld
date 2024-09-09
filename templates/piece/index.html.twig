@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des pièces{% endblock %}
+
+{% block body %}
+    <h1>Liste des pièces</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Marque</th>
+                <th>Prix d'achat</th>
+                <th>Quantité</th>
+                <th>Archivée</th>
+                <th>Bureau</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for piece in pieces %}
+                <tr>
+                    <td>{{ piece.name }}</td>
+                    <td>{{ piece.brand }}</td>
+                    <td>{{ piece.buyingPrice }}</td>
+                    <td>{{ piece.quantity }}</td>
+                    <td>{{ piece.description }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">Aucune pièce trouvée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

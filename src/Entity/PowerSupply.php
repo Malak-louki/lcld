@@ -6,6 +6,7 @@ use App\Repository\PowerSupplyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PowerSupplyRepository::class)]
 class PowerSupply extends Piece
@@ -13,6 +14,7 @@ class PowerSupply extends Piece
 
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Positive(message: "The power value must be a positive integer.")]
     private ?int $power = null;
 
     /**
@@ -24,11 +26,6 @@ class PowerSupply extends Piece
     public function __construct()
     {
         $this->models = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getPower(): ?int

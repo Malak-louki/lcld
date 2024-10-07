@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\StockHistoryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StockHistoryRepository::class)]
 class StockHistory
@@ -18,9 +19,13 @@ class StockHistory
     private ?Piece $piece = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $quantitychange = null;
+    #[Assert\NotNull(message: "Quantity change cannot be null.")]
+    #[Assert\Type(type: 'integer', message: "Quantity change must be an integer.")]
+    private ?int $quantityChange = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Assert\NotNull(message: "Change date cannot be null.")]
+    #[Assert\Type("\DateTimeInterface", message: "Change date must be a valid date.")]
     private ?\DateTimeInterface $changeDate = null;
 
     public function getId(): ?int
@@ -40,14 +45,14 @@ class StockHistory
         return $this;
     }
 
-    public function getQuantitychange(): ?int
+    public function getQuantityChange(): ?int
     {
-        return $this->quantitychange;
+        return $this->quantityChange;
     }
 
-    public function setQuantitychange(?int $quantitychange): static
+    public function setQuantityChange(?int $quantityChange): static
     {
-        $this->quantitychange = $quantitychange;
+        $this->quantityChange = $quantityChange;
 
         return $this;
     }

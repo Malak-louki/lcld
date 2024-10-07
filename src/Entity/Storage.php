@@ -6,14 +6,18 @@ use App\Repository\StorageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StorageRepository::class)]
 class Storage extends Piece
 {
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $storageType = null; // Renamed from 'type' to 'storageType'
+    #[Assert\NotBlank(message: "Storage type cannot be blank.")]
+    private ?string $storageType = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Type(type: 'integer', message: "Capacity must be an integer.")]
+    #[Assert\Positive(message: "Capacity must be a positive number.")]
     private ?int $capacity = null;
 
     /**
@@ -26,7 +30,6 @@ class Storage extends Piece
     {
         $this->models = new ArrayCollection();
     }
-
 
     public function getStorageType(): ?string
     {
@@ -78,6 +81,4 @@ class Storage extends Piece
 
         return $this;
     }
-
 }
-

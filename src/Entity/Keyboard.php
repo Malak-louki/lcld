@@ -6,11 +6,11 @@ use App\Repository\KeyboardRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: KeyboardRepository::class)]
 class Keyboard extends Piece
 {
-
     #[ORM\Column(nullable: true)]
     private ?bool $isWireless = null;
 
@@ -18,6 +18,7 @@ class Keyboard extends Piece
     private ?bool $hasNumericKeypad = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255, maxMessage: "The key type cannot exceed {{ limit }} characters")]
     private ?string $keyType = null;
 
     /**
@@ -29,11 +30,6 @@ class Keyboard extends Piece
     public function __construct()
     {
         $this->models = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function isWireless(): ?bool
@@ -93,7 +89,6 @@ class Keyboard extends Piece
     public function removeModel(Model $model): static
     {
         if ($this->models->removeElement($model)) {
-            // set the owning side to null (unless already changed)
             if ($model->getKeyboard() === $this) {
                 $model->setKeyboard(null);
             }

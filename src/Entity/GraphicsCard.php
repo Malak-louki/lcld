@@ -5,16 +5,19 @@ namespace App\Entity;
 use App\Repository\GraphicsCardRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: GraphicsCardRepository::class)]
 class GraphicsCard extends Piece
 {
-
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255, maxMessage: "The chipset name cannot exceed {{ limit }} characters")]
     private ?string $chipset = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Positive(message: "Memory must be a positive integer")]
     private ?int $memory = null;
 
     /**
@@ -26,11 +29,6 @@ class GraphicsCard extends Piece
     public function __construct()
     {
         $this->models = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getChipset(): ?string
@@ -78,7 +76,6 @@ class GraphicsCard extends Piece
     public function removeModel(Model $model): static
     {
         if ($this->models->removeElement($model)) {
-            // set the owning side to null (unless already changed)
             if ($model->getGraphicsCard() === $this) {
                 $model->setGraphicsCard(null);
             }

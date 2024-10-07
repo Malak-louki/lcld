@@ -6,14 +6,13 @@ use App\Repository\MonitorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MonitorRepository::class)]
 class Monitor extends Piece
 {
-
-
-
     #[ORM\Column(nullable: true)]
+    #[Assert\PositiveOrZero(message: "The diagonal size must be a positive number or zero.")]
     private ?float $diagonalSize = null;
 
     /**
@@ -25,11 +24,6 @@ class Monitor extends Piece
     public function __construct()
     {
         $this->models = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getDiagonalSize(): ?float
@@ -70,5 +64,4 @@ class Monitor extends Piece
 
         return $this;
     }
-
 }

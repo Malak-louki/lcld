@@ -6,16 +6,17 @@ use App\Repository\MotherboardRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MotherboardRepository::class)]
 class Motherboard extends Piece
 {
-
-    
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255, maxMessage: "The socket cannot exceed {{ limit }} characters.")]
     private ?string $socket = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255, maxMessage: "The form factor cannot exceed {{ limit }} characters.")]
     private ?string $formFactor = null;
 
     /**
@@ -29,22 +30,6 @@ class Motherboard extends Piece
         parent::__construct();
         $this->model = new ArrayCollection();
     }
-
-    // /**
-    //  * @var Collection<int, Model>
-    //  */
-    // #[ORM\OneToMany(targetEntity: Model::class, mappedBy: 'motherboard')]
-    // private Collection $model;
-
-    // public function __construct()
-    // {
-    //     $this->model = new ArrayCollection();
-    // }
-
-    // public function getId(): ?int
-    // {
-    //     return $this->id;
-    // }
 
     public function getSocket(): ?string
     {
@@ -70,36 +55,6 @@ class Motherboard extends Piece
         return $this;
     }
 
-    // /**
-    //  * @return Collection<int, Model>
-    //  */
-    // public function getmodel(): Collection
-    // {
-    //     return $this->model;
-    // }
-
-    // public function addmodel(Model $model): static
-    // {
-    //     if (!$this->model->contains($model)) {
-    //         $this->model->add($model);
-    //         $model->setMotherboard($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removemodel(Model $model): static
-    // {
-    //     if ($this->model->removeElement($model)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($model->getMotherboard() === $this) {
-    //             $model->setMotherboard(null);
-    //         }
-    //     }
-
-    //     return $this;
-    // }
-
     /**
      * @return Collection<int, Model>
      */
@@ -121,7 +76,6 @@ class Motherboard extends Piece
     public function removeModel(Model $model): static
     {
         if ($this->model->removeElement($model)) {
-            // set the owning side to null (unless already changed)
             if ($model->getMotherboard() === $this) {
                 $model->setMotherboard(null);
             }

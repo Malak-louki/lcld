@@ -30,47 +30,39 @@ class Piece
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    //  /**
-    //  * @Groups("piece:read")
-    //  */
+
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    //     /**
-    //  * @Groups("piece:read")
-    //  */
+    #[Assert\NotBlank(message: "The name cannot be blank")]
+    #[Assert\Length(max: 255, maxMessage: "The name cannot exceed {{ limit }} characters")]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    //     /**
-    //  * @Groups("piece:read")
-    //  */
+    #[Assert\NotBlank(message: "The brand cannot be blank")]
+    #[Assert\Length(max: 255, maxMessage: "The brand cannot exceed {{ limit }} characters")]
     private ?string $brand = null;
 
     #[ORM\Column]
-    //     /**
-    //  * @Groups("piece:read")
-    //  */
+    #[Assert\NotBlank(message: "The buying price cannot be blank")]
+    #[Assert\PositiveOrZero(message: "The buying price must be zero or a positive value")]
     private ?float $buyingPrice = null;
 
     #[ORM\Column]
-    //     /**
-    //  * @Groups("piece:read")
-    //  */
+    #[Assert\NotBlank(message: "The quantity cannot be blank")]
+    #[Assert\PositiveOrZero(message: "The quantity must be zero or a positive value")]
+
     private ?int $quantity = null;
 
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\Length(max: 12000)]
-    //     /**
-    //  * @Groups("piece:read")
-    //  */
+    #[Assert\Length(max: 12000, maxMessage: "The description cannot exceed {{ limit }} characters")]
+
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    //     /**
-    //  * @Groups("piece:read")
-    //  */
+    #[Assert\Length(max: 255, maxMessage: "The category cannot exceed {{ limit }} characters")]
+
     private ?string $category = null;
 
     /**

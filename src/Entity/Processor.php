@@ -6,20 +6,21 @@ use App\Repository\ProcessorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProcessorRepository::class)]
 class Processor extends Piece
 {
-
-
-
     #[ORM\Column(nullable: true)]
+    #[Assert\Positive(message: "The frequency must be a positive number.")]
     private ?float $frequency = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Positive(message: "The number of cores must be a positive integer.")]
     private ?int $cores = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message: "Compatible chipsets cannot be empty if specified.")]
     private ?string $compatibleChipsets = null;
 
     /**
@@ -31,11 +32,6 @@ class Processor extends Piece
     public function __construct()
     {
         $this->models = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getFrequency(): ?float
@@ -95,7 +91,6 @@ class Processor extends Piece
     public function removeModel(Model $model): static
     {
         if ($this->models->removeElement($model)) {
-            // set the owning side to null (unless already changed)
             if ($model->getProcessor() === $this) {
                 $model->setProcessor(null);
             }

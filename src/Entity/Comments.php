@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CommentsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommentsRepository::class)]
 class Comments
@@ -14,17 +15,26 @@ class Comments
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $commentDate = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $isRead = null;
+    private ?bool $isRead = false;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: "Comment cannot be blank.")]
     private ?string $comment = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[Assert\NotBlank]
     private ?User $editor = null;
+
+    public function __construct()
+    {
+
+        $this->commentDate = new \DateTime();
+    }
+
 
     public function getId(): ?int
     {
@@ -36,12 +46,6 @@ class Comments
         return $this->commentDate;
     }
 
-    public function setCommentDate(?\DateTimeInterface $commentDate): static
-    {
-        $this->commentDate = $commentDate;
-
-        return $this;
-    }
 
     public function isRead(): ?bool
     {

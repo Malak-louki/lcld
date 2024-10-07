@@ -6,19 +6,21 @@ use App\Repository\RAMRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RAMRepository::class)]
 class RAM extends Piece
 {
-
-
     #[ORM\Column(nullable: true)]
+    #[Assert\Positive(message: "Capacity must be a positive integer.")]
     private ?int $capacity = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Positive(message: "The number of modules must be a positive integer.")]
     private ?int $modules = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message: "Type/Frequency cannot be blank if specified.")]
     private ?string $typeFrequency = null;
 
     /**
@@ -30,12 +32,6 @@ class RAM extends Piece
     public function __construct()
     {
         $this->models = new ArrayCollection();
-    }
-
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getCapacity(): ?int
@@ -100,5 +96,4 @@ class RAM extends Piece
 
         return $this;
     }
-
 }

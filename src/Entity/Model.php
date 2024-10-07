@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ModelRepository::class)]
 class Model
@@ -17,65 +19,86 @@ class Model
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message: "You must enter the product's name")]
+    #[Assert\Length(max: 255, maxMessage: "The name cannot exceed {{ limit }} characters")]
     private ?string $name = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isDesktop = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Positive]
     private ?int $computerCreationNumber = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $addDate = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Positive]
+    #[Assert\NotBlank]
     private ?float $totalPrice = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isArchived = null;
 
-    // #[ORM\ManyToOne(inversedBy: 'models')]
-    // private ?Motherboard $motherboard = null;
-
     #[ORM\ManyToOne(inversedBy: 'models')]
+    #[Assert\NotBlank]
+    #[Groups(['model:read', 'model:write'])]
     private ?Processor $processor = null;
 
 
     #[ORM\ManyToOne(inversedBy: 'models')]
+    #[Assert\NotBlank]
+    #[Groups(['model:read', 'model:write'])]
     private ?GraphicsCard $graphicsCard = null;
 
     #[ORM\ManyToOne(inversedBy: 'models')]
+    #[Assert\NotBlank]
+    #[Groups(['model:read', 'model:write'])]
     private ?Keyboard $keyboard = null;
 
     #[ORM\ManyToOne(inversedBy: 'models')]
+    #[Assert\NotBlank]
+    #[Groups(['model:read', 'model:write'])]
     private ?MousePad $mousePad = null;
 
 
     #[ORM\ManyToOne(inversedBy: 'models')]
+    #[Assert\NotBlank]
+    #[Groups(['model:read', 'model:write'])]
     private ?PowerSupply $powerSupply = null;
 
     /**
      * @var Collection<int, RAM>
      */
     #[ORM\ManyToMany(targetEntity: RAM::class, inversedBy: 'models')]
+    #[Assert\NotBlank]
+    #[Groups(['model:read', 'model:write'])]
     private Collection $ram;
 
     /**
      * @var Collection<int, Monitor>
      */
     #[ORM\ManyToMany(targetEntity: Monitor::class, inversedBy: 'models')]
+    #[Assert\NotBlank]
+    #[Groups(['model:read', 'model:write'])]
     private Collection $monitor;
 
     /**
      * @var Collection<int, Storage>
      */
     #[ORM\ManyToMany(targetEntity: Storage::class, inversedBy: 'models')]
+    #[Assert\NotBlank]
+    #[Groups(['model:read', 'model:write'])]
     private Collection $storageDevices;
 
     #[ORM\ManyToOne(inversedBy: 'model')]
+    #[Assert\NotBlank]
+    #[Groups(['model:read', 'model:write'])]
     private ?Motherboard $motherboard = null;
 
     public function __construct()
@@ -173,18 +196,6 @@ class Model
 
         return $this;
     }
-
-    // public function getMotherboard(): ?Motherboard
-    // {
-    //     return $this->motherboard;
-    // }
-
-    // public function setMotherboard(?Motherboard $motherboard): static
-    // {
-    //     $this->motherboard = $motherboard;
-
-    //     return $this;
-    // }
 
     public function getProcessor(): ?Processor
     {

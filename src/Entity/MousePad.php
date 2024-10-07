@@ -6,15 +6,16 @@ use App\Repository\MousePadRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MousePadRepository::class)]
 class MousePad extends Piece
 {
-    
     #[ORM\Column(nullable: true)]
     private ?bool $isWireless = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\PositiveOrZero(message: "The number of buttons must be zero or a positive integer.")]
     private ?int $buttons = null;
 
     /**
@@ -26,11 +27,6 @@ class MousePad extends Piece
     public function __construct()
     {
         $this->models = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function isWireless(): ?bool

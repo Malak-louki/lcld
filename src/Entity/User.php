@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -22,6 +23,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: "You must enter an email")]
+    #[Assert\Email(message: "The email '{{ value }}' is not a valid email.")]
     private ?string $email = null;
 
     /**
@@ -34,20 +37,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(message: "You must enter a password")]
+    #[Assert\Length(min: 8, minMessage: "The password must be at least {{ limit }} characters long")]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "You must enter your name")]
+    #[Assert\Length(max: 255, maxMessage: "The name cannot exceed {{ limit }} characters")]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
+    #[Assert\Type(type: "bool", message: "The value must be a boolean")]
     private ?bool $isAConceptor = null;
 
     #[ORM\Column]
+    #[Assert\Type(type: "bool", message: "The value must be a boolean")]
     private bool $isVerified = false;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "You must enter your lastname")]
+    #[Assert\Length(max: 255, maxMessage: "The lastname cannot exceed {{ limit }} characters")]
     private ?string $lastName = null;
 
     /**
@@ -205,7 +214,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeComment(Comments $comment): static
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
             if ($comment->getEditor() === $this) {
                 $comment->setEditor(null);
             }

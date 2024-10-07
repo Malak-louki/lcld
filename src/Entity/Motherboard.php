@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Motherboard extends Piece
 {
 
+    
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $socket = null;
 
@@ -40,10 +41,10 @@ class Motherboard extends Piece
     //     $this->model = new ArrayCollection();
     // }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    // public function getId(): ?int
+    // {
+    //     return $this->id;
+    // }
 
     public function getSocket(): ?string
     {

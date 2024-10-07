@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PieceRepository::class)]
 #[ORM\InheritanceType("JOINED")]
@@ -30,26 +30,47 @@ class Piece
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    //  /**
+    //  * @Groups("piece:read")
+    //  */
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    //     /**
+    //  * @Groups("piece:read")
+    //  */
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    //     /**
+    //  * @Groups("piece:read")
+    //  */
     private ?string $brand = null;
 
     #[ORM\Column]
+    //     /**
+    //  * @Groups("piece:read")
+    //  */
     private ?float $buyingPrice = null;
 
     #[ORM\Column]
+    //     /**
+    //  * @Groups("piece:read")
+    //  */
     private ?int $quantity = null;
 
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(max: 12000)]
+    //     /**
+    //  * @Groups("piece:read")
+    //  */
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    //     /**
+    //  * @Groups("piece:read")
+    //  */
     private ?string $category = null;
 
     /**

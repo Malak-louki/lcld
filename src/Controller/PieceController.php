@@ -17,11 +17,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class PieceController extends AbstractController
 {
     #[Route('/api/piece/list', name: 'liste des pieces', methods: ['GET'])]
-    public function getAllPieces(PieceRepository $pieceRepository): Response
+    public function getAllPieces(PieceRepository $pieceRepository, SerializerInterface $serializer): Response
     {
-        return $this->render('piece/index.html.twig', [
-            'pieces' => $pieceRepository->findAll(),
-        ]);
+        $piecesList = $pieceRepository->findAll();
+        $jsonPieceList = $serializer->serialize($piecesList, 'json' );
+        return new JsonResponse($jsonPieceList, Response::HTTP_OK,[], true);
     }
     #[Route(path: 'api/piece/{id}', name: 'piece_by_id', methods: ['GET'])]
     public function getPieceById(int $id, PieceRepository $pieceRepository, SerializerInterface $serializer): JsonResponse
@@ -87,7 +87,6 @@ class PieceController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        // Mise à jour des propriétés si elles sont fournies
         if (isset($data['name'])) {
             $piece->setName($data['name']);
         }
@@ -107,7 +106,6 @@ class PieceController extends AbstractController
             $piece->setCategory($data['category']);
         }
 
-        // Persiste les modifications dans la base de données
         $em->flush();
 
         return new JsonResponse(['message' => 'Piece updated successfully'], Response::HTTP_OK);

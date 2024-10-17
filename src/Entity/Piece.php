@@ -65,16 +65,14 @@ class Piece
 
     private ?string $category = null;
 
-    /**
-     * @var Collection<int, StockHistory>
-     */
-    #[ORM\OneToMany(targetEntity: StockHistory::class, mappedBy: 'piece')]
-    private Collection $stockHistories;
+    #[ORM\OneToMany(mappedBy: 'piece', targetEntity: StockHistory::class, cascade: ['persist', 'remove'])]
+    private Collection $stockHistory;
 
     public function __construct()
     {
-        $this->stockHistories = new ArrayCollection();
+        $this->stockHistory = new ArrayCollection();
     }
+
 
 
     public function getId(): ?int
@@ -154,28 +152,26 @@ class Piece
         return $this;
     }
 
-    /**
-     * @return Collection<int, StockHistory>
-     */
-    public function getStockHistories(): Collection
+
+    public function getStockHistory(): Collection
     {
-        return $this->stockHistories;
+        return $this->stockHistory;
+        
     }
 
-    public function addStockHistory(StockHistory $stockHistory): static
+    public function addStockHistory(StockHistory $stockHistory): self
     {
-        if (!$this->stockHistories->contains($stockHistory)) {
-            $this->stockHistories->add($stockHistory);
+        if (!$this->stockHistory->contains($stockHistory)) {
+            $this->stockHistory[] = $stockHistory;
             $stockHistory->setPiece($this);
         }
-
+        dd($this->stockHistory);
         return $this;
     }
 
-    public function removeStockHistory(StockHistory $stockHistory): static
+    public function removeStockHistory(StockHistory $stockHistory): self
     {
-        if ($this->stockHistories->removeElement($stockHistory)) {
-
+        if ($this->stockHistory->removeElement($stockHistory)) {
             if ($stockHistory->getPiece() === $this) {
                 $stockHistory->setPiece(null);
             }
@@ -183,5 +179,4 @@ class Piece
 
         return $this;
     }
-
 }

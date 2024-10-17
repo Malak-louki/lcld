@@ -2,7 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\GraphicsCard;
+use App\Entity\Keyboard;
+use App\Entity\Monitor;
+use App\Entity\Motherboard;
+use App\Entity\MousePad;
 use App\Entity\Piece;
+use App\Entity\PowerSupply;
+use App\Entity\Processor;
+use App\Entity\RAM;
+use App\Entity\Storage;
 use App\Repository\PieceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,15 +22,17 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class PieceController extends AbstractController
 {
-    #[Route('/api/piece/list', name: 'liste des pieces', methods: ['GET'])]
+
+    #[Route('/api/piece/list', name: 'pieces_list', methods: ['GET'])]
     public function getAllPieces(PieceRepository $pieceRepository, SerializerInterface $serializer): Response
     {
         $piecesList = $pieceRepository->findAll();
-        $jsonPieceList = $serializer->serialize($piecesList, 'json' );
-        return new JsonResponse($jsonPieceList, Response::HTTP_OK,[], true);
+        $jsonPieceList = $serializer->serialize($piecesList, 'json');
+        return new JsonResponse($jsonPieceList, Response::HTTP_OK, [], true);
     }
     #[Route(path: 'api/piece/{id}', name: 'piece_by_id', methods: ['GET'])]
     public function getPieceById(int $id, PieceRepository $pieceRepository, SerializerInterface $serializer): JsonResponse
@@ -33,7 +44,8 @@ class PieceController extends AbstractController
         $jsonPiece = $serializer->serialize($piece, 'json');
         return new JsonResponse($jsonPiece, Response::HTTP_OK, [], true);
     }
-    #[Route('/api/piece/add', name: 'ajout_des_pieces', methods: ['POST'])]
+
+    #[Route('/api/piece/add', name: 'add_piece', methods: ['POST'])]
     public function addPiece(
         PieceRepository $pieceRepository,
         Request $request,
@@ -42,26 +54,65 @@ class PieceController extends AbstractController
         UrlGeneratorInterface $urlGenerator,
         ValidatorInterface $validator
     ): JsonResponse {
-        $data = $request->getContent();
-        $piece = $serializer->deserialize($data, Piece::class, 'json');
+        $data = json_decode($request->getContent(), true);
 
+        // Déterminer le type de la pièce
+        $type = $data['type'] ?? null;
+        if ($type === null) {
+            return new JsonResponse(['error' => 'Piece Type is required'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Instancier la bonne classe en fonction du type
+        switch (strtolower($type)) {
+            case 'motherboard':
+                $pieceClass = Motherboard::class;
+                break;
+            case 'processor':
+                $pieceClass = Processor::class;
+                break;
+            case 'graphicscard':
+                $pieceClass = GraphicsCard::class;
+                break;
+            case 'ram':
+                $pieceClass = RAM::class;
+                break;
+            case 'keyboard':
+                $pieceClass = Keyboard::class;
+                break;
+            case 'mousepad':
+                $pieceClass = MousePad::class;
+                break;
+            case 'monitor':
+                $pieceClass = Monitor::class;
+                break;
+            case 'powersupply':
+                $pieceClass = PowerSupply::class;
+                break;
+            case 'storage':
+                $pieceClass = Storage::class;
+                break;
+            default:
+                return new JsonResponse(['error' => 'Invalid type'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Désérialiser les données dans la bonne classe
+        $piece = $serializer->deserialize($request->getContent(), $pieceClass, 'json');
+
+        // Valider l'entité
         $errors = $validator->validate($piece);
         if (count($errors) > 0) {
-            $errorsString = (string) $errors;
-            return new JsonResponse($errorsString, Response::HTTP_BAD_REQUEST);
+            return new JsonResponse((string) $errors, Response::HTTP_BAD_REQUEST);
         }
+
+        // Enregistrer dans la base de données
         $em->persist($piece);
         $em->flush();
 
+        // Retourner une réponse JSON avec les données de la pièce ajoutée
         $jsonPiece = $serializer->serialize($piece, 'json');
         return new JsonResponse($jsonPiece, Response::HTTP_CREATED, [], true);
     }
-    public function index(): Response
-    {
-        return $this->render('piece/index.html.twig', [
-            'PieceController' => 'PieceController',
-        ]);
-    }
+
 
     #[Route('/api/piece/{id}', name: 'delete_piece', methods: ['DELETE'])]
     public function deletePiece(int $id, PieceRepository $pieceRepository, EntityManagerInterface $em): JsonResponse
